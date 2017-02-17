@@ -1,16 +1,16 @@
 name := "core"
 
-version := "2017.1.15"
+//version := "2017.1.16"
 
 enablePlugins(ScalaJSPlugin)
 
 val scala211 = "2.11.8"
 
-val scala212 = "2.12.0"
+val scala212 = "2.12.1"
 
-scalaVersion := scala211
+scalaVersion := scala212
 
-crossScalaVersions := Seq(scala211,scala212)
+crossScalaVersions := Seq(scala211, scala212)
 
 scalacOptions ++= Seq(
   "-feature",
@@ -19,13 +19,13 @@ scalacOptions ++= Seq(
   "-language:implicitConversions"
 )
 
-
 //bintray
 resolvers += Resolver.jcenterRepo
 
 organization := "scalajs-react-universe"
 
-licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html"))
+licenses += ("Apache-2.0", url(
+  "http://www.opensource.org/licenses/apache2.0.php"))
 
 bintrayOrganization := Some("scalajs-react-universe")
 
@@ -36,7 +36,10 @@ bintrayVcsUrl := Some("git@github.com:scalajs-react-universe/core.git")
 publishArtifact in Test := false
 
 //Test
+scalaJSModuleKind := ModuleKind.CommonJSModule
 resolvers += Resolver.bintrayRepo("scalajs-react-universe", "maven")
 libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.0" % Test
-//libraryDependencies += "scalajs-react-universe" %%% "enzyme" % "2017.1.0" % Test
-scalaJSStage in Global := FastOptStage
+libraryDependencies += "scalajs-react-universe" %%% "enzyme" % "2017.2.0-SNAPSHOT" % Test
+libraryDependencies += "scalajs-react-universe" %%% "macros" % "2017.2.0-SNAPSHOT" % Test
+//scalaJSStage in Global := FastOptStage
+scalaJSStage in Global := FullOptStage
