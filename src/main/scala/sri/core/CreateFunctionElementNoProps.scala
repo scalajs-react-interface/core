@@ -9,7 +9,7 @@ object CreateFunctionElementNoProps {
   def apply[C <: ReactClass](func: () => ReactElement { type Instance = C }, key: String | Int = null)
     : ReactElement { type Instance = C } = {
     CreateElementJS(
-      (((props: JSProps { type ScalaProps = Unit }) => func()): js.Function)
+      (func: js.Function)
         .asInstanceOf[C],
       js.Dynamic.literal(),
       key = key,
