@@ -6,11 +6,9 @@ import scala.scalajs.{LinkingInfo, js}
 object CreateElementJSNoInline {
 
   @inline
-  def apply[C <: ReactClass](ctor: C,
-                             props: js.Any,
-                             key: String | Int = null,
-                             ref: C => Unit = null,
-                             children: js.Array[ReactNode] = emptyJSArray())
+  def apply[C <: ReactClass](ctor: ComponentConstructor {
+    type ComponentType = C
+  }, props: C#PropsType, key: String | Int = null, ref: js.Function1[C, Unit] = null, children: js.Array[ReactNode] = emptyJSArray())
     : ReactElement { type Instance = C } = {
 
     if (ref != null)
@@ -20,7 +18,7 @@ object CreateElementJSNoInline {
         .asInstanceOf[js.Dynamic]
         .updateDynamic("key")(key.asInstanceOf[js.Any])
     React
-      .createElement(ctor, props, children: _*)
+      .createElement(ctor, props.asInstanceOf[js.Any], children: _*)
       .asInstanceOf[ReactElement { type Instance = C }]
   }
 

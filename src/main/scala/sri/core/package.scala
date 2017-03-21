@@ -11,7 +11,7 @@ package object core {
 
   type RefType = js.Function
 
-  type PropsChildrenType = ReactElement | js.Array[ReactChildren]
+  type PropsChildrenType = ReactElement | js.Array[ReactElement]
 
   type ReactText = String | Double
 
@@ -21,6 +21,8 @@ package object core {
 
   type ReactNode = ReactElement | ReactText | js.Array[ReactElement] | js.Array[
     String] | js.Array[Double]
+
+  @inline def emptyJSArray[A]() = js.Array[A]()
 
   @inline
   def REACT_ELEMENT_TYPE: js.Any =
@@ -32,42 +34,18 @@ package object core {
   @inline def setReactElementType =
     js.Dynamic.global.`REACT_ELEMENT_TYPE` = REACT_ELEMENT_TYPE
 
-  /* this works here, but not in the general case!
-   * (see https://github.com/scala-js/scala-js/pull/2070 )
-   */
-  //TODO We need to find a better solution here
-//  implicit def UnionEvidence[A: ClassTag, B: ClassTag](
-//      ab: A | B)(implicit eva: A => js.Any, evb: B => js.Any): js.Any =
-//    ab.asInstanceOf[js.Any]
+  @inline
+  def componentConstructor[C <: ReactClass: js.ConstructorTag]
+    : ComponentConstructor { type ComponentType = C } =
+    js.constructorTag[C]
+      .constructor
+      .asInstanceOf[ComponentConstructor { type ComponentType = C }]
 
-  implicit def genTravarsableToJSArrayReactElement(
-      elm: GenTraversableOnce[ReactElement]): ReactNode =
-    elm.toJSArray.asInstanceOf[ReactNode]
-
-  implicit class Boolean_Ext_Methods(val value: Boolean) extends AnyVal {
-    def ?=(elm: => ReactNode): ReactElement =
-      if (value) elm.asInstanceOf[ReactElement] else null
-  }
-
-  implicit class UndefOr_Ext_Methods(val value: js.UndefOr[_]) extends AnyVal {
-    def isUndefinedOrNull: Boolean = value.isEmpty || value == null
-
-    def isDefinedAndNotNull: Boolean = value.isDefined && value != null
-  }
-
-  @inline def emptyJSArray[A]() = js.Array[A]()
-
-  implicit class String_Ext_Methods(val value: String) extends AnyVal {
-
-    def removeForwardSlashes =
-      if (value != null) value.replaceAll("/", "") else value
-
-    def removeTrailingSlash =
-      if (value != null) value.replaceAll("/$", "") else value
-  }
-
-  trait CoreAll {}
-
-  object all extends CoreAll
+  //https://github.com/milessabin/shapeless/blob/master/core/src/main/scala/shapeless/package.scala#L40-L45
+  trait =:!=[A, B] extends Serializable
+  def unexpected: Nothing = sys.error("Unexpected invocation")
+  implicit def neq[A, B]: A =:!= B = new =:!=[A, B] {}
+  implicit def neqAmbig1[A]: A =:!= A = unexpected
+  implicit def neqAmbig2[A]: A =:!= A = unexpected
 
 }

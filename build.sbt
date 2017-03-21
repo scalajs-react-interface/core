@@ -8,7 +8,7 @@ val scala211 = "2.11.8"
 
 val scala212 = "2.12.1"
 
-scalaVersion := scala212
+scalaVersion := scala211
 
 crossScalaVersions := Seq(scala211, scala212)
 
@@ -39,7 +39,5 @@ publishArtifact in Test := false
 scalaJSModuleKind := ModuleKind.CommonJSModule
 resolvers += Resolver.bintrayRepo("scalajs-react-universe", "maven")
 libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.0" % Test
-libraryDependencies += "scalajs-react-universe" %%% "enzyme" % "2017.2.0-SNAPSHOT" % Test
-libraryDependencies += "scalajs-react-universe" %%% "macros" % "2017.2.0-SNAPSHOT" % Test
 //scalaJSStage in Global := FastOptStage
 scalaJSStage in Global := FullOptStage

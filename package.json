@@ -11,14 +11,15 @@
     "build": "webpack --watch"
   },
   "devDependencies": {
+    "jsdom-global": "2.1.1",
     "webpack": "^1.9.10"
   },
   "dependencies": {
     "enzyme": "^2.7.0",
     "history": "^4.4.0",
     "jsdom": "^9.9.1",
-    "react": "^15.3.2",
-    "react-addons-test-utils": "^15.3.2",
-    "react-dom": "^15.3.2"
+    "react": "next",
+    "react-addons-test-utils": "next",
+    "react-dom": "next"
   }
 }

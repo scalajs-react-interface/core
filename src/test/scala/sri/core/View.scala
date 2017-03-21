@@ -7,7 +7,7 @@ import scala.scalajs.js.annotation.ScalaJSDefined
 case class ViewProps(id: String)
 
 @ScalaJSDefined
-class View extends ReactComponent[ViewProps, Unit] {
+class View extends ComponentP[ViewProps] {
 
   def render() =
     React.createElement("div", js.Dynamic.literal(id = props.id), children)
@@ -16,6 +16,9 @@ class View extends ReactComponent[ViewProps, Unit] {
 object View {
 
   @inline
-  def apply(id: String)(children: ReactNode*) =
-    CreateElement[View](ViewProps(id), children = children.toJSArray)
+  def apply(id: String, ref: js.Function1[View, Unit] = null)(
+      children: ReactNode*) =
+    CreateElementWithChildren[View](ViewProps(id),
+                                    ref = ref,
+                                    children = children.toJSArray)
 }

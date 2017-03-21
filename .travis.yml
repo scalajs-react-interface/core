@@ -12,23 +12,22 @@ install:
   - nvm install stable
   - nvm use stable
   - npm install
-  - npm install jsdom source-map-support
+  - npm install jsdom source-map-support jsdom-global
 
 env:
   global:
     JSENV=node
 
-#script:
-#  - sbt ++$TRAVIS_SCALA_VERSION test:fastOptJS test:fullOptJS
-#  - sbt ++$TRAVIS_SCALA_VERSION 'set parallelExecution in ThisBuild := false' test
-#  - sbt ++$TRAVIS_SCALA_VERSION 'set parallelExecution in ThisBuild := false' 'set scalaJSStage in ThisBuild := FullOptStage' test
-#  - bin/checkDevOnly $TRAVIS_SCALA_VERSION
+script:
+  - sbt ++$TRAVIS_SCALA_VERSION test:fastOptJS test:fullOptJS
+  - sbt ++$TRAVIS_SCALA_VERSION 'set parallelExecution in ThisBuild := false' test
+  - sbt ++$TRAVIS_SCALA_VERSION 'set parallelExecution in ThisBuild := false' 'set scalaJSStage in ThisBuild := FullOptStage' test
 
 
 deploy:
   provider: script
   script:
-  - /bin/bash "$TRAVIS_BUILD_DIR/.travis.credentials.sh" && sbt +publish
+  - /bin/bash "$TRAVIS_BUILD_DIR/.travis.credentials.sh" && sbt ++$TRAVIS_SCALA_VERSION publish
   on:
     tags: true
 

@@ -6,18 +6,16 @@ import scala.scalajs.js.{ConstructorTag, |}
 object CreateElement {
 
   @inline
-  def apply[C <: ReactScalaClass: ConstructorTag](
-      props: C#Props#ScalaProps,
-      key: String | Int = null,
-      ref: C => Unit = null,
-      children: js.Array[ReactNode] = emptyJSArray())
+  def apply[C <: ReactScalaClass: ConstructorTag](props: C#ScalaPropsType,
+                                                  key: String | Int = null,
+                                                  ref: js.Function1[C, Unit] =
+                                                    null)
     : ReactElement { type Instance = C } = {
-    CreateElementJS(
-      js.constructorTag[C].constructor.asInstanceOf[C],
-      js.Dynamic.literal(sprops = props.asInstanceOf[js.Any]),
+    CreateElementJS[C](
+      componentConstructor[C],
+      JSProps(props),
       key = key,
-      ref = ref,
-      children
+      ref = ref
     )
   }
 

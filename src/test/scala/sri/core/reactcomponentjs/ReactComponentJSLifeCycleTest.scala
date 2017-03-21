@@ -1,10 +1,9 @@
 package sri.core
+package reactcomponentjs
 
-import sri.enzyme.Enzyme
+class ComponentJSLifeCycleTest extends BaseTest {
 
-class ReactComponentJSLifeCycleTest extends BaseTest {
-
-  import ReactComponentJSLifeCycle._
+  import ComponentJSLifeCycle._
 
   before {
     willMount = false
@@ -16,10 +15,11 @@ class ReactComponentJSLifeCycleTest extends BaseTest {
     willReceiveProps = false
   }
 
-  test("test life cycles1") {
-    val instance = Enzyme.shallow(ReactComponentJSLifeCycle()).instance()
+  test("test ComponentJS life cycles1") {
+    val instance =
+      ReactDOM.render(ComponentJSLifeCycle(), app)
     assert(willMount)
-    //    assert(didMount == DID_MOUNT) TODO check didMount not called in shallowRender
+    assert(didMount)
     assert(rendered)
     assert(!willUpdate)
     assert(!didUpdate)

@@ -4,16 +4,13 @@ import scala.scalajs.{LinkingInfo, js}
 import scala.scalajs.js.{ConstructorTag, |}
 
 object CreateElementJS {
-
   @inline
-  def apply[C <: ReactClass](ctor: C,
-                             props: js.Any,
-                             key: String | Int = null,
-                             ref: C => Unit = null,
-                             children: js.Array[ReactNode] = emptyJSArray())
+  def apply[C <: ReactClass](ctor: ComponentConstructor {
+    type ComponentType = C
+  }, props: C#PropsType, key: String | Int = null, ref: js.Function1[C, Unit] = null, children: js.Array[ReactNode] = emptyJSArray())
     : ReactElement { type Instance = C } = {
 
-    if (LinkingInfo.developmentMode || ref != null) {
+    if (LinkingInfo.developmentMode) {
       if (ref != null)
         props.asInstanceOf[js.Dynamic].updateDynamic("ref")(ref)
       if (key != null)
@@ -21,7 +18,7 @@ object CreateElementJS {
           .asInstanceOf[js.Dynamic]
           .updateDynamic("key")(key.asInstanceOf[js.Any])
       React
-        .createElement(ctor, props, children: _*)
+        .createElement(ctor, props.asInstanceOf[js.Any], children: _*)
         .asInstanceOf[ReactElement { type Instance = C }]
     } else { // https://babeljs.io/docs/plugins/transform-react-inline-elements/
       if (children.length == 1) {
@@ -37,7 +34,8 @@ object CreateElementJS {
           `$$typeof` = js.Dynamic.global
             .selectDynamic("REACT_ELEMENT_TYPE"),
           `type` = ctor,
-          props = props,
+          props = props.asInstanceOf[js.Any],
+          ref = ref,
           key =
             if (key != null) "" + key
             else key.asInstanceOf[js.Any]
