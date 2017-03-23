@@ -22,22 +22,22 @@ scalacOptions ++= Seq(
 //bintray
 resolvers += Resolver.jcenterRepo
 
-organization := "scalajs-react-universe"
+organization := "scalajs-react-interface"
 
 licenses += ("Apache-2.0", url(
   "http://www.opensource.org/licenses/apache2.0.php"))
 
-bintrayOrganization := Some("scalajs-react-universe")
+bintrayOrganization := Some("scalajs-react-interface")
 
 bintrayRepository := "maven"
 
-bintrayVcsUrl := Some("git@github.com:scalajs-react-universe/core.git")
+bintrayVcsUrl := Some("git@github.com:scalajs-react-interface/core.git")
 
 publishArtifact in Test := false
 
 //Test
 scalaJSModuleKind := ModuleKind.CommonJSModule
-resolvers += Resolver.bintrayRepo("scalajs-react-universe", "maven")
+resolvers += Resolver.bintrayRepo("scalajs-react-interface", "maven")
 libraryDependencies += "org.scalatest" %%% "scalatest" % "3.0.0" % Test
 //scalaJSStage in Global := FastOptStage
 scalaJSStage in Global := FullOptStage
