@@ -24,7 +24,6 @@ trait React extends js.Object {
 
   def Children: ReactChildren = js.native
 
-  val PropTypes: js.Dynamic = js.native
 }
 
 @js.native
