@@ -4,9 +4,9 @@ name := "core"
 
 enablePlugins(ScalaJSPlugin)
 
-val scala211 = "2.11.8"
+val scala211 = "2.11.11"
 
-val scala212 = "2.12.1"
+val scala212 = "2.12.2"
 
 scalaVersion := scala211
 
