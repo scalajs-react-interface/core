@@ -12,17 +12,13 @@ install:
   - nvm install stable
   - nvm use stable
   - npm install
-  - npm install jsdom source-map-support jsdom-global
 
 env:
   global:
     JSENV=node
 
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION test:fastOptJS test:fullOptJS
-  - sbt ++$TRAVIS_SCALA_VERSION 'set parallelExecution in ThisBuild := false' test
-  - sbt ++$TRAVIS_SCALA_VERSION 'set parallelExecution in ThisBuild := false' 'set scalaJSStage in ThisBuild := FullOptStage' test
-
+  - sbt ++$TRAVIS_SCALA_VERSION testDev testProd
 
 deploy:
   provider: script

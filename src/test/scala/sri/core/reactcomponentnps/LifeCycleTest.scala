@@ -2,21 +2,20 @@ package sri.core.reactcomponentnps
 
 import sri.core.{
   BaseTest,
-  CreateElementNoProps,
-  CreateElementWithChildren,
-  JSProps,
   ComponentNoPS,
   ComponentP,
   ComponentS,
+  CreateElementNoProps,
+  CreateElementWithChildren,
+  JSProps,
   ReactDOM,
   ReactNode,
   View
 }
 
+import scala.scalajs.js
 import scala.scalajs.js.JSConverters.genTravConvertible2JSRichGenTrav
-import scala.scalajs.js.annotation.ScalaJSDefined
 
-@ScalaJSDefined
 class GlobalComponent extends ComponentS[GlobalState] {
 
   initialState(
@@ -40,7 +39,6 @@ class GlobalComponent extends ComponentS[GlobalState] {
 
 case class GlobalState(parentProps: PureParent.Props)
 
-@ScalaJSDefined
 class PureParent extends ComponentP[PureParent.Props] {
   import PureParent._
   def render() = {
@@ -67,7 +65,6 @@ object PureParent {
     CreateElementWithChildren[PureParent](props, children = children.toJSArray)
 }
 
-@ScalaJSDefined
 class RNPSChild extends ComponentNoPS {
   import RNPSChild._
   def render() = {
@@ -124,25 +121,28 @@ object RNPSChild {
 
 class LifeCycleTest extends BaseTest {
 
-  test("test ComponentNPS life cycles") {
+  test(
+    "test ComponentNPS life cycles",
+    () => {
 
-    import RNPSChild._
+      import RNPSChild._
 
-    val instance =
-      ReactDOM.render(CreateElementNoProps[GlobalComponent](), app)
+      val instance =
+        ReactDOM.render(CreateElementNoProps[GlobalComponent](),
+                        org.scalajs.dom.document.getElementById(APP_ID))
 
-    assert(willMount)
-    assert(didMount)
-    assert(rendered)
-    assert(!willUpdate)
-    assert(!didUpdate)
-    assert(!willReceiveProps)
-    assert(!shouldUpdate)
-    instance.newStateUpdate()
-    assert(willUpdate)
-    assert(didUpdate)
-    assert(willReceiveProps)
-    assert(shouldUpdate)
+      expect(willMount).toBeTruthy()
+      expect(didMount).toBeTruthy()
+      expect(rendered).toBeTruthy()
+      expect(willUpdate).toBeFalsy()
+      expect(didUpdate).toBeFalsy()
+      expect(willReceiveProps).toBeFalsy()
+      expect(shouldUpdate).toBeFalsy()
+      instance.newStateUpdate()
+      expect(willUpdate).toBeTruthy()
+      expect(didUpdate).toBeTruthy()
+      expect(shouldUpdate).toBeTruthy()
 
-  }
+    }
+  )
 }

@@ -1,7 +1,7 @@
 package sri.core
 
+import scala.scalajs.js.|
 import scala.scalajs.{LinkingInfo, js}
-import scala.scalajs.js.{ConstructorTag, |}
 
 object CreateElementJS {
   @inline
@@ -31,8 +31,7 @@ object CreateElementJS {
           .updateDynamic("children")(js.Array(children: _*))
       js.Dynamic
         .literal(
-          `$$typeof` = js.Dynamic.global
-            .selectDynamic("REACT_ELEMENT_TYPE"),
+          `$$typeof` = CoreGlobals.REACT_ELEMENT_TYPE,
           `type` = ctor,
           props = props.asInstanceOf[js.Any],
           ref = ref,

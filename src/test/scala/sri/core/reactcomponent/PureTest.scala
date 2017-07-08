@@ -2,23 +2,22 @@ package sri.core.reactcomponent
 
 import sri.core.{
   BaseTest,
+  Component,
+  ComponentP,
+  ComponentS,
   CreateElement,
   CreateElementNoProps,
   CreateElementWithChildren,
   JSProps,
   JSState,
-  Component,
-  ComponentP,
-  ComponentS,
   ReactDOM,
   ReactNode,
   View
 }
 
+import scala.scalajs.js
 import scala.scalajs.js.JSConverters.genTravConvertible2JSRichGenTrav
-import scala.scalajs.js.annotation.ScalaJSDefined
 
-@ScalaJSDefined
 class GlobalComponent extends ComponentS[GlobalState] {
 
   initialState(
@@ -47,7 +46,6 @@ class GlobalComponent extends ComponentS[GlobalState] {
 
 case class GlobalState(parentProps: PureParent.Props)
 
-@ScalaJSDefined
 class PureParent extends ComponentP[PureParent.Props] {
   import PureParent._
   def render() = {
@@ -74,7 +72,6 @@ object PureParent {
     CreateElementWithChildren[PureParent](props, children = children.toJSArray)
 }
 
-@ScalaJSDefined
 class PureChild extends Component[PureChild.Props, PureChild.State] {
   import PureChild._
   initialState(State("childState"))
@@ -103,40 +100,53 @@ object PureChild {
 
 class PureTest extends BaseTest {
 
-  before {
-    PureParent.willUpdate = false
-    PureChild.willUpdate = false
-  }
-
-  test("when parent didn't updated child shouldn't update") {
-    val instance =
-      ReactDOM.render(CreateElementNoProps[GlobalComponent](), app)
-    assert(!PureParent.willUpdate)
-    assert(!PureChild.willUpdate)
-    instance.dummyStateUpdate()
-    assert(!PureParent.willUpdate)
-    assert(!PureChild.willUpdate)
-  }
+  test(
+    "when parent didn't updated child shouldn't update",
+    () => {
+      PureParent.willUpdate = false
+      PureChild.willUpdate = false
+      val instance =
+        ReactDOM.render(CreateElementNoProps[GlobalComponent](),
+                        org.scalajs.dom.document.getElementById(APP_ID))
+      expect(PureParent.willUpdate).toBeFalsy()
+      expect(PureChild.willUpdate).toBeFalsy()
+      instance.dummyStateUpdate()
+      expect(PureParent.willUpdate).toBeFalsy()
+      expect(PureChild.willUpdate).toBeFalsy()
+    }
+  )
 
   test(
-    "when parent state changed and child props didn't changed then parent will update child shouldn't update") {
-    val instance =
-      ReactDOM.render(CreateElementNoProps[GlobalComponent](), app)
-    assert(!PureParent.willUpdate)
-    assert(!PureChild.willUpdate)
-    instance.newStateUpdate()
-    assert(PureParent.willUpdate)
-    assert(!PureChild.willUpdate)
-  }
+    "when parent state changed and child props didn't changed then parent will update child shouldn't update",
+    () => {
+      PureParent.willUpdate = false
+      PureChild.willUpdate = false
+      val instance =
+        ReactDOM.render(CreateElementNoProps[GlobalComponent](),
+                        org.scalajs.dom.document.getElementById(APP_ID))
+
+      expect(PureParent.willUpdate).toBeFalsy()
+      expect(PureChild.willUpdate).toBeFalsy()
+      instance.newStateUpdate()
+      expect(PureParent.willUpdate).toBeTruthy()
+      expect(PureChild.willUpdate).toBeFalsy()
+    }
+  )
 
   test(
-    "when parent state changed and child props also changed then parent will update child should also update") {
-    val instance =
-      ReactDOM.render(CreateElementNoProps[GlobalComponent](), app)
-    assert(!PureParent.willUpdate)
-    assert(!PureChild.willUpdate)
-    instance.newStateWithNewChildPropsUpdate()
-    assert(PureParent.willUpdate)
-    assert(PureChild.willUpdate)
-  }
+    "when parent state changed and child props also changed then parent will update child should also update",
+    () => {
+      PureParent.willUpdate = false
+      PureChild.willUpdate = false
+      val instance =
+        ReactDOM.render(CreateElementNoProps[GlobalComponent](),
+                        org.scalajs.dom.document.getElementById(APP_ID))
+      expect(PureParent.willUpdate).toBeFalsy()
+      expect(PureChild.willUpdate).toBeFalsy()
+      instance.newStateWithNewChildPropsUpdate()
+      expect(PureParent.willUpdate).toBeTruthy()
+      expect(PureChild.willUpdate).toBeTruthy()
+
+    }
+  )
 }

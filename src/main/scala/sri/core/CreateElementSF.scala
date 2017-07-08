@@ -1,7 +1,7 @@
 package sri.core
 
 import scala.scalajs.js
-import scala.scalajs.js.{ConstructorTag, |}
+import scala.scalajs.js.|
 
 object CreateElementSF {
 
@@ -10,8 +10,7 @@ object CreateElementSF {
     : ReactElement { type Instance = C } = {
     js.Dynamic
       .literal(
-        `$$typeof` = js.Dynamic.global
-          .selectDynamic("REACT_ELEMENT_TYPE"),
+        `$$typeof` = CoreGlobals.REACT_ELEMENT_TYPE,
         `type` = func,
         props = props.asInstanceOf[js.Any],
         key =

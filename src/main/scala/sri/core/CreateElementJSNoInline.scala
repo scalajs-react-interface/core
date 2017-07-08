@@ -1,7 +1,7 @@
 package sri.core
 
+import scala.scalajs.js
 import scala.scalajs.js.|
-import scala.scalajs.{LinkingInfo, js}
 
 object CreateElementJSNoInline {
 

@@ -25,6 +25,8 @@ project/plugins/project/
 
 #project
 examples/js/
+*.test.js
+*.test.js.map
 
 #node
 

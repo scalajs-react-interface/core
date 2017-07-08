@@ -1,10 +1,9 @@
 package sri.core.reactcomponents
 
-import sri.core.{BaseTest, CreateElementNoProps, ComponentS, ReactDOM}
+import sri.core.{BaseTest, ComponentS, CreateElementNoProps, ReactDOM}
 
-import scala.scalajs.js.annotation.ScalaJSDefined
+import scala.scalajs.js
 
-@ScalaJSDefined
 class LifeCycle extends ComponentS[LifeCycle.State] {
 
   import LifeCycle._
@@ -16,7 +15,6 @@ class LifeCycle extends ComponentS[LifeCycle.State] {
   }
 
   override def componentDidMount(): Unit = {
-    println(s"component did mount")
     didMount = true
   }
 
@@ -26,8 +24,6 @@ class LifeCycle extends ComponentS[LifeCycle.State] {
 
   override def componentWillUpdate(nextProps: PropsType,
                                    nextState: StateType): Unit = {
-    println(
-      s"********************* nextProps : $nextProps   nextSTate : $nextState")
     willUpdate = true
   }
 
@@ -44,8 +40,6 @@ class LifeCycle extends ComponentS[LifeCycle.State] {
 
   override def componentDidUpdate(prevProps: PropsType,
                                   prevState: StateType): Unit = {
-    println(
-      s"********************* prevProps : $prevProps   prevSTate : $prevState")
     didUpdate = true
   }
 
@@ -85,34 +79,39 @@ object LifeCycle {
 
 class LifeCycleTest extends BaseTest {
   import LifeCycle._
-  before {
-    willMount = false
-    didMount = false
-    rendered = false
-    willUpdate = false
-    didUpdate = false
-    shouldUpdate = false
-    willReceiveProps = false
-  }
 
-  test("test ComponentS life cycles") {
+//  before {
+  willMount = false
+  didMount = false
+  rendered = false
+  willUpdate = false
+  didUpdate = false
+  shouldUpdate = false
+  willReceiveProps = false
+//  }
 
-    val instance =
-      ReactDOM.render(LifeCycle(), app)
+  test(
+    "test ComponentS life cycles",
+    () => {
 
-    assert(willMount)
-    assert(didMount)
-    assert(rendered)
-    assert(!willUpdate)
-    assert(!didUpdate)
-    assert(!willReceiveProps)
-    assert(!shouldUpdate)
-    instance.updateState()
-    assert(willUpdate)
-    assert(didUpdate)
-    assert(!willReceiveProps)
-    assert(shouldUpdate)
+      val instance =
+        ReactDOM.render(LifeCycle(),
+                        org.scalajs.dom.document.getElementById(APP_ID))
 
-  }
+      expect(willMount).toBeTruthy()
+      expect(didMount).toBeTruthy()
+      expect(rendered).toBeTruthy()
+      expect(willUpdate).toBeFalsy()
+      expect(didUpdate).toBeFalsy()
+      expect(willReceiveProps).toBeFalsy()
+      expect(shouldUpdate).toBeFalsy()
+      instance.updateState()
+      expect(willUpdate).toBeTruthy()
+      expect(didUpdate).toBeTruthy()
+      expect(willReceiveProps).toBeFalsy()
+      expect(shouldUpdate).toBeTruthy()
+
+    }
+  )
 
 }

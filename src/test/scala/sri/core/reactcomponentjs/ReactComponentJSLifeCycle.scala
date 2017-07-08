@@ -2,7 +2,6 @@ package sri.core
 package reactcomponentjs
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.ScalaJSDefined
 
 object ComponentJSLifeCycle {
 
@@ -24,7 +23,6 @@ object ComponentJSLifeCycle {
 
   case class State(name: String)
 
-  @ScalaJSDefined
   class Component extends ComponentJS[js.Object, State] {
 
     initialState(State(""))
@@ -34,7 +32,6 @@ object ComponentJSLifeCycle {
     }
 
     override def componentDidMount(): Unit = {
-      println(s"component did mount")
       didMount = true
     }
 
@@ -63,9 +60,7 @@ object ComponentJSLifeCycle {
       didUpdate = true
     }
 
-    override def componentWillUnmount(): Unit = {
-      println(s"*********************** unmount")
-    }
+    override def componentWillUnmount(): Unit = {}
 
     def updateState() = {
       setState((state: State) => state.copy("newState"))

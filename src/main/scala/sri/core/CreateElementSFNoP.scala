@@ -10,8 +10,7 @@ object CreateElementSFNoP {
     : ReactElement { type Instance = C } = {
     js.Dynamic
       .literal(
-        `$$typeof` = js.Dynamic.global
-          .selectDynamic("REACT_ELEMENT_TYPE"),
+        `$$typeof` = CoreGlobals.REACT_ELEMENT_TYPE,
         `type` = func,
         props = js.Dynamic.literal(),
         key =

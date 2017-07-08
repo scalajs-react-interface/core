@@ -1,11 +1,21 @@
-package sri.core
-package reactcomponent
+package sri.core.secondaryconstructor
+
+import sri.core.{
+  BaseTest,
+  ComponentSecondary,
+  CreateElement,
+  JSProps,
+  ReactDOM
+}
 
 import scala.scalajs.js
 
-class LifeCycle extends Component[LifeCycle.Props, LifeCycle.State] {
+class LifeCycle(initialProps: JSProps { type ScalaProps = LifeCycle.Props })
+    extends ComponentSecondary[LifeCycle.Props, LifeCycle.State](initialProps) {
 
   import LifeCycle._
+
+  var propsInCtor = props
 
   initialState(State(""))
 
@@ -81,7 +91,6 @@ object LifeCycle {
 class LifeCycleTest extends BaseTest {
   import LifeCycle._
 
-//  before {
   willMount = false
   didMount = false
   rendered = false
@@ -89,16 +98,14 @@ class LifeCycleTest extends BaseTest {
   didUpdate = false
   shouldUpdate = false
   willReceiveProps = false
-//  }
 
   test(
-    "test Component life cycles",
+    "test ComponentSecondary life cycles",
     () => {
 
       val instance =
         ReactDOM.render(LifeCycle(),
                         org.scalajs.dom.document.getElementById(APP_ID))
-
       expect(willMount).toBeTruthy()
       expect(didMount).toBeTruthy()
       expect(rendered).toBeTruthy()
@@ -111,7 +118,7 @@ class LifeCycleTest extends BaseTest {
       expect(didUpdate).toBeTruthy()
       expect(willReceiveProps).toBeFalsy()
       expect(shouldUpdate).toBeTruthy()
-
+      expect(instance.propsInCtor != null).toBeTruthy()
     }
   )
 

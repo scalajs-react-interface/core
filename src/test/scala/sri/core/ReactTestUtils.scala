@@ -48,4 +48,6 @@ object ReactDOM extends js.Object {
 
   def render[I](element: ReactElement { type Instance = I }, container: js.Any, callback: js.Function0[_] = ???)
     : I = js.native
+
+  def unmountComponentAtNode(node: js.Any): Boolean = js.native
 }
