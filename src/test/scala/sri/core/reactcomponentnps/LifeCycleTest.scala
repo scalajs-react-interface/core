@@ -13,7 +13,6 @@ import sri.core.{
   View
 }
 
-import scala.scalajs.js
 import scala.scalajs.js.JSConverters.genTravConvertible2JSRichGenTrav
 
 class GlobalComponent extends ComponentS[GlobalState] {
@@ -121,28 +120,26 @@ object RNPSChild {
 
 class LifeCycleTest extends BaseTest {
 
-  test(
-    "test ComponentNPS life cycles",
-    () => {
+  test("test ComponentNPS life cycles") {
 
-      import RNPSChild._
+    import RNPSChild._
 
-      val instance =
-        ReactDOM.render(CreateElementNoProps[GlobalComponent](),
-                        org.scalajs.dom.document.getElementById(APP_ID))
+    val instance =
+      ReactDOM.render(CreateElementNoProps[GlobalComponent](),
+                      org.scalajs.dom.document.getElementById(APP_ID))
 
-      expect(willMount).toBeTruthy()
-      expect(didMount).toBeTruthy()
-      expect(rendered).toBeTruthy()
-      expect(willUpdate).toBeFalsy()
-      expect(didUpdate).toBeFalsy()
-      expect(willReceiveProps).toBeFalsy()
-      expect(shouldUpdate).toBeFalsy()
-      instance.newStateUpdate()
-      expect(willUpdate).toBeTruthy()
-      expect(didUpdate).toBeTruthy()
-      expect(shouldUpdate).toBeTruthy()
+    expect(willMount).toBeTruthy()
+    expect(didMount).toBeTruthy()
+    expect(rendered).toBeTruthy()
+    expect(willUpdate).toBeFalsy()
+    expect(didUpdate).toBeFalsy()
+    expect(willReceiveProps).toBeFalsy()
+    expect(shouldUpdate).toBeFalsy()
+    instance.newStateUpdate()
+    expect(willUpdate).toBeTruthy()
+    expect(didUpdate).toBeTruthy()
+    expect(shouldUpdate).toBeTruthy()
 
-    }
-  )
+  }
+
 }

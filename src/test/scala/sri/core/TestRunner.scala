@@ -1,11 +1,5 @@
 package sri.core
 
-import org.scalajs.dom
-import sri.core.functioncomponent.FunctionComponentsTest
-import sri.core.reactcomponent.{LifeCycleTest, PureTest}
-
-import scala.scalajs.js
-import scala.scalajs.js.annotation.JSGlobalScope
 import scalajsjest.JestRunner
 
 object TestRunner {

@@ -1,12 +1,6 @@
 package sri.core.secondaryconstructor
 
-import sri.core.{
-  BaseTest,
-  ComponentSecondary,
-  CreateElement,
-  JSProps,
-  ReactDOM
-}
+import sri.core.{BaseTest, ComponentSecondary, CreateElement, JSProps, ReactDOM}
 
 import scala.scalajs.js
 
@@ -83,8 +77,7 @@ object LifeCycle {
   case class Props()
 
   @inline
-  def apply(props: Props = Props(),
-            ref: js.Function1[LifeCycle, Unit] = null) =
+  def apply(props: Props = Props(), ref: js.Function1[LifeCycle, Unit] = null) =
     CreateElement[LifeCycle](props, ref = ref)
 }
 
@@ -99,27 +92,24 @@ class LifeCycleTest extends BaseTest {
   shouldUpdate = false
   willReceiveProps = false
 
-  test(
-    "test ComponentSecondary life cycles",
-    () => {
+  test("test ComponentSecondary life cycles") {
 
-      val instance =
-        ReactDOM.render(LifeCycle(),
-                        org.scalajs.dom.document.getElementById(APP_ID))
-      expect(willMount).toBeTruthy()
-      expect(didMount).toBeTruthy()
-      expect(rendered).toBeTruthy()
-      expect(willUpdate).toBeFalsy()
-      expect(didUpdate).toBeFalsy()
-      expect(willReceiveProps).toBeFalsy()
-      expect(shouldUpdate).toBeFalsy()
-      instance.updateState()
-      expect(willUpdate).toBeTruthy()
-      expect(didUpdate).toBeTruthy()
-      expect(willReceiveProps).toBeFalsy()
-      expect(shouldUpdate).toBeTruthy()
-      expect(instance.propsInCtor != null).toBeTruthy()
-    }
-  )
+    val instance =
+      ReactDOM.render(LifeCycle(),
+                      org.scalajs.dom.document.getElementById(APP_ID))
+    expect(willMount).toBeTruthy()
+    expect(didMount).toBeTruthy()
+    expect(rendered).toBeTruthy()
+    expect(willUpdate).toBeFalsy()
+    expect(didUpdate).toBeFalsy()
+    expect(willReceiveProps).toBeFalsy()
+    expect(shouldUpdate).toBeFalsy()
+    instance.updateState()
+    expect(willUpdate).toBeTruthy()
+    expect(didUpdate).toBeTruthy()
+    expect(willReceiveProps).toBeFalsy()
+    expect(shouldUpdate).toBeTruthy()
+    expect(instance.propsInCtor != null).toBeTruthy()
+  }
 
 }

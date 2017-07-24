@@ -2,8 +2,6 @@ package sri.core.reactcomponents
 
 import sri.core.{BaseTest, ComponentS, CreateElementNoProps, ReactDOM}
 
-import scala.scalajs.js
-
 class LifeCycle extends ComponentS[LifeCycle.State] {
 
   import LifeCycle._
@@ -90,28 +88,25 @@ class LifeCycleTest extends BaseTest {
   willReceiveProps = false
 //  }
 
-  test(
-    "test ComponentS life cycles",
-    () => {
+  test("test ComponentS life cycles") {
 
-      val instance =
-        ReactDOM.render(LifeCycle(),
-                        org.scalajs.dom.document.getElementById(APP_ID))
+    val instance =
+      ReactDOM.render(LifeCycle(),
+                      org.scalajs.dom.document.getElementById(APP_ID))
 
-      expect(willMount).toBeTruthy()
-      expect(didMount).toBeTruthy()
-      expect(rendered).toBeTruthy()
-      expect(willUpdate).toBeFalsy()
-      expect(didUpdate).toBeFalsy()
-      expect(willReceiveProps).toBeFalsy()
-      expect(shouldUpdate).toBeFalsy()
-      instance.updateState()
-      expect(willUpdate).toBeTruthy()
-      expect(didUpdate).toBeTruthy()
-      expect(willReceiveProps).toBeFalsy()
-      expect(shouldUpdate).toBeTruthy()
+    expect(willMount).toBeTruthy()
+    expect(didMount).toBeTruthy()
+    expect(rendered).toBeTruthy()
+    expect(willUpdate).toBeFalsy()
+    expect(didUpdate).toBeFalsy()
+    expect(willReceiveProps).toBeFalsy()
+    expect(shouldUpdate).toBeFalsy()
+    instance.updateState()
+    expect(willUpdate).toBeTruthy()
+    expect(didUpdate).toBeTruthy()
+    expect(willReceiveProps).toBeFalsy()
+    expect(shouldUpdate).toBeTruthy()
 
-    }
-  )
+  }
 
 }

@@ -57,13 +57,11 @@ object RefsChild {
 
 class RefsTest extends BaseTest {
 
-  test(
-    "should be able to access instance of component with ref",
-    () => {
-      val instance =
-        ReactDOM.render(RefsParent(),
-                        org.scalajs.dom.document.getElementById(APP_ID))
-      expect(instance != null).toBeTruthy()
-    }
-  )
+  test("should be able to access instance of component with ref") {
+    val instance =
+      ReactDOM.render(RefsParent(),
+                      org.scalajs.dom.document.getElementById(APP_ID))
+    expect(instance != null).toBeTruthy()
+  }
+
 }

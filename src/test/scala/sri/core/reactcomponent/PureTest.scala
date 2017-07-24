@@ -15,7 +15,6 @@ import sri.core.{
   View
 }
 
-import scala.scalajs.js
 import scala.scalajs.js.JSConverters.genTravConvertible2JSRichGenTrav
 
 class GlobalComponent extends ComponentS[GlobalState] {
@@ -100,53 +99,46 @@ object PureChild {
 
 class PureTest extends BaseTest {
 
-  test(
-    "when parent didn't updated child shouldn't update",
-    () => {
-      PureParent.willUpdate = false
-      PureChild.willUpdate = false
-      val instance =
-        ReactDOM.render(CreateElementNoProps[GlobalComponent](),
-                        org.scalajs.dom.document.getElementById(APP_ID))
-      expect(PureParent.willUpdate).toBeFalsy()
-      expect(PureChild.willUpdate).toBeFalsy()
-      instance.dummyStateUpdate()
-      expect(PureParent.willUpdate).toBeFalsy()
-      expect(PureChild.willUpdate).toBeFalsy()
-    }
-  )
+  test("when parent didn't updated child shouldn't update") {
+    PureParent.willUpdate = false
+    PureChild.willUpdate = false
+    val instance =
+      ReactDOM.render(CreateElementNoProps[GlobalComponent](),
+                      org.scalajs.dom.document.getElementById(APP_ID))
+    expect(PureParent.willUpdate).toBeFalsy()
+    expect(PureChild.willUpdate).toBeFalsy()
+    instance.dummyStateUpdate()
+    expect(PureParent.willUpdate).toBeFalsy()
+    expect(PureChild.willUpdate).toBeFalsy()
+  }
 
   test(
-    "when parent state changed and child props didn't changed then parent will update child shouldn't update",
-    () => {
-      PureParent.willUpdate = false
-      PureChild.willUpdate = false
-      val instance =
-        ReactDOM.render(CreateElementNoProps[GlobalComponent](),
-                        org.scalajs.dom.document.getElementById(APP_ID))
+    "when parent state changed and child props didn't changed then parent will update child shouldn't update") {
+    PureParent.willUpdate = false
+    PureChild.willUpdate = false
+    val instance =
+      ReactDOM.render(CreateElementNoProps[GlobalComponent](),
+                      org.scalajs.dom.document.getElementById(APP_ID))
 
-      expect(PureParent.willUpdate).toBeFalsy()
-      expect(PureChild.willUpdate).toBeFalsy()
-      instance.newStateUpdate()
-      expect(PureParent.willUpdate).toBeTruthy()
-      expect(PureChild.willUpdate).toBeFalsy()
-    }
-  )
+    expect(PureParent.willUpdate).toBeFalsy()
+    expect(PureChild.willUpdate).toBeFalsy()
+    instance.newStateUpdate()
+    expect(PureParent.willUpdate).toBeTruthy()
+    expect(PureChild.willUpdate).toBeFalsy()
+  }
 
   test(
-    "when parent state changed and child props also changed then parent will update child should also update",
-    () => {
-      PureParent.willUpdate = false
-      PureChild.willUpdate = false
-      val instance =
-        ReactDOM.render(CreateElementNoProps[GlobalComponent](),
-                        org.scalajs.dom.document.getElementById(APP_ID))
-      expect(PureParent.willUpdate).toBeFalsy()
-      expect(PureChild.willUpdate).toBeFalsy()
-      instance.newStateWithNewChildPropsUpdate()
-      expect(PureParent.willUpdate).toBeTruthy()
-      expect(PureChild.willUpdate).toBeTruthy()
+    "when parent state changed and child props also changed then parent will update child should also update") {
+    PureParent.willUpdate = false
+    PureChild.willUpdate = false
+    val instance =
+      ReactDOM.render(CreateElementNoProps[GlobalComponent](),
+                      org.scalajs.dom.document.getElementById(APP_ID))
+    expect(PureParent.willUpdate).toBeFalsy()
+    expect(PureChild.willUpdate).toBeFalsy()
+    instance.newStateWithNewChildPropsUpdate()
+    expect(PureParent.willUpdate).toBeTruthy()
+    expect(PureChild.willUpdate).toBeTruthy()
 
-    }
-  )
+  }
 }

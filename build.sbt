@@ -70,7 +70,7 @@ resolvers += Resolver.bintrayRepo("scalajs-jest", "maven")
 
 libraryDependencies ++= Seq(
   "org.scala-js" %%% "scalajs-dom" % "0.9.3" % Test,
-  "scalajs-jest" %%% "core" % "2017.7.9-beta" % Test
+  "scalajs-jest" %%% "core" % "2017.7.25-RC" % Test
 )
 //scalaJSStage in Global := FastOptStage
 scalaJSStage in Global := FullOptStage
