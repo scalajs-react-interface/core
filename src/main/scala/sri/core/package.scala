@@ -11,13 +11,9 @@ package object core {
   type ReactEmpty = Boolean | Null
 
   type ReactNode = ReactElement | ReactText | js.Array[ReactElement] | js.Array[
-    String] | js.Array[Double]
+    String] | js.Array[Double] | ReactPortal
 
   type ReactElementNode = ReactElement | js.Array[ReactElement]
-
-  type ReactRenderNode =
-    String | ReactElement | js.Array[String] | js.Array[ReactElement]
-
   @inline def emptyJSArray[A]() = js.Array[A]()
 
   @inline

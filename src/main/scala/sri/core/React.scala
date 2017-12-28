@@ -2,7 +2,7 @@ package sri.core
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSImport, JSName}
-import scala.scalajs.js.{UndefOr, undefined}
+import scala.scalajs.js.{UndefOr, undefined, |}
 
 @js.native
 trait React extends js.Object {
@@ -34,6 +34,16 @@ trait ReactElement extends js.Object {
   def key: UndefOr[String] = js.native
 
   def ref: UndefOr[js.Function] = js.native
+}
+
+@js.native
+trait ErrorInfo extends js.Object {
+  val componentStack: String = js.native
+}
+@js.native
+trait ReactPortal extends js.Object {
+  val key: js.UndefOr[String | Int] = js.native
+  val children: ReactNode = js.native
 }
 
 trait ReactClass extends js.Object {
@@ -113,7 +123,7 @@ abstract class ComponentRaw[P, S] extends ReactClass {
 
   override type StateType = S
 
-  def render(): ReactRenderNode
+  def render(): ReactNode
 
   def props: P = js.native
 
@@ -122,6 +132,8 @@ abstract class ComponentRaw[P, S] extends ReactClass {
   var refs: js.Dynamic = js.native
 
   var context: js.Dynamic = js.native
+
+  def componentDidCatch(error: js.Error, errorInfo: ErrorInfo): Unit = js.native
 
   def setState(newState: S, callback: UndefOr[() => _] = js.undefined): Unit =
     js.native
@@ -150,15 +162,14 @@ abstract class ComponentRaw[P, S] extends ReactClass {
 @JSImport("react", "Component")
 private[sri] abstract class InternalComponentSecondary[P >: Null <: AnyRef,
                                                        S >: Null <: AnyRef](
-    initialJSProps: JSProps { type ScalaProps = P })(
-    implicit ev: =:!=[P, Null])
+    initialJSProps: JSProps { type ScalaProps = P })(implicit ev: =:!=[P, Null])
     extends ReactScalaClass {
 
   override type ScalaPropsType = P
 
   override type ScalaStateType = S
 
-  def render(): ReactRenderNode
+  def render(): ReactNode
 
   @JSName("props") def jsProps: PropsType = js.native
 
@@ -172,6 +183,8 @@ private[sri] abstract class InternalComponentSecondary[P >: Null <: AnyRef,
     js.native
 
   def forceUpdate(callback: js.Function = ???): Unit = js.native
+
+  def componentDidCatch(error: js.Error, errorInfo: ErrorInfo): Unit = js.native
 
   def componentWillMount(): Unit = js.native
 
@@ -229,8 +242,8 @@ abstract class ComponentSecondary[P >: Null <: AnyRef, S >: Null <: AnyRef](
   @JSName("setStateFromStateAndProps")
   @inline
   def setState(func: js.Function2[S, P, S]): Unit = {
-    jsSetState((s: StateType, p: PropsType) =>
-      JSState(func(s.scalaState, p.scalaProps)))
+    jsSetState(
+      (s: StateType, p: PropsType) => JSState(func(s.scalaState, p.scalaProps)))
   }
 
   @JSName("setStateFromState")
@@ -276,9 +289,11 @@ private[sri] abstract class InternalComponent[P <: AnyRef, S <: AnyRef]
   def jsSetState(func: js.Function2[StateType, PropsType, StateType]): Unit =
     js.native
 
+  def componentDidCatch(error: js.Error, errorInfo: ErrorInfo): Unit = js.native
+
   def forceUpdate(callback: js.Function = ???): Unit = js.native
 
-  def render(): ReactRenderNode
+  def render(): ReactNode
 
   def componentWillMount(): Unit = js.native
 
@@ -338,8 +353,8 @@ abstract class Component[P >: Null <: AnyRef, S >: Null <: AnyRef](
   @JSName("setStateFromStateAndProps")
   @inline
   def setState(func: js.Function2[S, P, S]): Unit = {
-    jsSetState((s: StateType, p: PropsType) =>
-      JSState(func(s.scalaState, p.scalaProps)))
+    jsSetState(
+      (s: StateType, p: PropsType) => JSState(func(s.scalaState, p.scalaProps)))
   }
 
   @JSName("setStateFromState")
@@ -379,7 +394,9 @@ private[sri] abstract class InternalComponentP[P <: AnyRef]
 
   def forceUpdate(callback: js.Function = ???): Unit = js.native
 
-  def render(): ReactRenderNode
+  def render(): ReactNode
+
+  def componentDidCatch(error: js.Error, errorInfo: ErrorInfo): Unit = js.native
 
   def componentWillMount(): Unit = js.native
 
@@ -447,9 +464,11 @@ private[sri] abstract class InternalComponentS[S <: AnyRef]
   def jsSetState(func: js.Function1[StateType, StateType]): Unit =
     js.native
 
+  def componentDidCatch(error: js.Error, errorInfo: ErrorInfo): Unit = js.native
+
   def forceUpdate(callback: js.Function = ???): Unit = js.native
 
-  def render(): ReactRenderNode
+  def render(): ReactNode
 
   def componentWillMount(): Unit = js.native
 
@@ -534,9 +553,11 @@ private[sri] abstract class InternalComponentJS[P <: js.Object, S <: AnyRef]
   def jsSetState(func: js.Function2[StateType, PropsType, StateType]): Unit =
     js.native
 
+  def componentDidCatch(error: js.Error, errorInfo: ErrorInfo): Unit = js.native
+
   def forceUpdate(callback: js.Function = ???): Unit = js.native
 
-  def render(): ReactRenderNode
+  def render(): ReactNode
 
   def componentWillMount(): Unit = js.native
 
@@ -577,9 +598,11 @@ private[sri] abstract class InternalComponentJSP[P <: AnyRef]
 
   var context: js.Dynamic = js.native
 
+  def componentDidCatch(error: js.Error, errorInfo: ErrorInfo): Unit = js.native
+
   def forceUpdate(callback: js.Function = ???): Unit = js.native
 
-  def render(): ReactRenderNode
+  def render(): ReactNode
 
   def componentWillMount(): Unit = js.native
 
@@ -686,7 +709,7 @@ private[sri] abstract class InternalComponentNoPS
 
   def forceUpdate(callback: js.Function = ???): Unit = js.native
 
-  def render(): ReactRenderNode
+  def render(): ReactNode
 
   def componentWillReceiveProps(): Unit = js.native
 

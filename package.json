@@ -11,8 +11,8 @@
   },
   "devDependencies": {},
   "dependencies": {
-    "jest": "^20.0.4",
-    "react": "next",
-    "react-dom": "next"
+    "jest": "^22.0.4",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
   }
 }

@@ -2,7 +2,4 @@ package sri.core
 
 import scalajsjest.JestSuite
 
-class BaseTest extends JestSuite {
-
-  val APP_ID = "app"
-}
+class BaseTest extends JestSuite with Constants {}

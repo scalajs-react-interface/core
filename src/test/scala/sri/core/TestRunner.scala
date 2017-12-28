@@ -1,14 +1,19 @@
 package sri.core
 
+import org.scalajs.dom._
+
 import scalajsjest.JestRunner
 
-object TestRunner {
+object TestRunner extends Constants {
 
   def main(args: Array[String]): Unit = {
-    val APP_ID = "app"
-    val app = org.scalajs.dom.document.createElement("div")
+
+    val app = document.createElement("div")
     app.setAttribute("id", APP_ID)
-    org.scalajs.dom.document.body.appendChild(app)
+    val pl = document.createElement("div")
+    pl.setAttribute("id", PORTAL_ELEMENT_ID)
+    document.body.appendChild(app)
+    document.body.appendChild(pl)
     JestRunner.run()
   }
 

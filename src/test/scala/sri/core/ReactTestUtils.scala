@@ -1,5 +1,7 @@
 package sri.core
 
+import org.scalajs.dom.Element
+
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSImport, JSName}
 
@@ -48,6 +50,9 @@ object ReactDOM extends js.Object {
 
   def render[I](element: ReactElement { type Instance = I }, container: js.Any, callback: js.Function0[_] = ???)
     : I = js.native
+
+  def createPortal(child: ReactNode, container: Element): ReactPortal =
+    js.native
 
   def unmountComponentAtNode(node: js.Any): Boolean = js.native
 }
