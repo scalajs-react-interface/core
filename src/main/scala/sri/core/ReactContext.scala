@@ -30,7 +30,7 @@ object ReactContext {
     def Consumer(children: js.Function1[T, ReactNode]) =
       CreateElementJS[JSComponent[js.Object]](
         in.asInstanceOf[ReactContextJS].Consumer,
-        null,
+        js.Dynamic.literal(),
         children = js.Array(children.asInstanceOf[ReactNode]))
 
   }
