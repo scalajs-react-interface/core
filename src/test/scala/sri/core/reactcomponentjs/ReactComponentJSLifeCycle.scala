@@ -2,20 +2,58 @@ package sri.core
 package reactcomponentjs
 
 import scala.scalajs.js
+import scala.scalajs.js.annotation.JSExportStatic
 
+class ComponentJSLifeCycle
+    extends ComponentJS[js.Object, ComponentJSLifeCycle.State] {
+  import ComponentJSLifeCycle._
+  initialState(State(""))
+
+  override def componentDidMount(): Unit = {
+    didMount = true
+  }
+
+  def render() = {
+    rendered = true
+    null
+  }
+
+  override def shouldComponentUpdate(nextProps: js.Object,
+                                     nextState: StateType): Boolean = {
+    shouldUpdate = true
+    true
+  }
+
+  override def getSnapshotBeforeUpdate(prevProps: js.Object,
+                                       prevJSState: JSState {
+                                         type ScalaState = State
+                                       }): js.UndefOr[SnapShot] = {
+    snapshotBeforeUpdate = true
+  }
+
+  override def componentDidUpdate(prevProps: js.Object,
+                                  prevJSState: StateType,
+                                  snapShot: js.UndefOr[SnapShot]): Unit = {
+    didUpdate = true
+  }
+
+  override def componentWillUnmount(): Unit = {}
+
+  def updateState() = {
+    setState((state: State) => state.copy("newState"))
+  }
+}
 object ComponentJSLifeCycle {
-
-  var willMount = false
 
   var willUnMount = false
 
   var didMount = false
 
-  var willUpdate = false
+  var snapshotBeforeUpdate = false
+
+  var derivedStateFromProps = false
 
   var didUpdate = false
-
-  var willReceiveProps = false
 
   var rendered = false
 
@@ -23,53 +61,18 @@ object ComponentJSLifeCycle {
 
   case class State(name: String)
 
-  class Component extends ComponentJS[js.Object, State] {
-
-    initialState(State(""))
-
-    override def componentWillMount(): Unit = {
-      willMount = true
-    }
-
-    override def componentDidMount(): Unit = {
-      didMount = true
-    }
-
-    override def componentWillReceiveProps(nextProps: js.Object): Unit = {
-      willReceiveProps = true
-    }
-
-    def render() = {
-      rendered = true
-      null
-    }
-
-    override def shouldComponentUpdate(nextProps: js.Object,
-                                       nextState: StateType): Boolean = {
-      shouldUpdate = true
-      true
-    }
-
-    override def componentWillUpdate(nextProps: js.Object,
-                                     nextState: StateType): Unit = {
-      willUpdate = true
-    }
-
-    override def componentDidUpdate(prevProps: js.Object,
-                                    nextJSState: StateType): Unit = {
-      didUpdate = true
-    }
-
-    override def componentWillUnmount(): Unit = {}
-
-    def updateState() = {
-      setState((state: State) => state.copy("newState"))
-    }
+  @JSExportStatic
+  def getDerivedStateFromProps(props: js.Object, state: JSState {
+    type ScalaState = State
+  }) = {
+    derivedStateFromProps = !derivedStateFromProps
+    JSState(state.scalaState.copy())
   }
 
   def apply(key: js.UndefOr[String] = js.undefined,
-            ref: js.Function1[Component, Unit] = null) =
-    CreateElementJS[Component](componentConstructor[Component],
-                               new js.Object {})
+            ref: js.Function1[ComponentJSLifeCycle, Unit] = null) =
+    CreateElementJS[ComponentJSLifeCycle](
+      componentConstructor[ComponentJSLifeCycle],
+      new js.Object {})
 
 }

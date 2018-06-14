@@ -1,6 +1,16 @@
 package sri.core.reactcomponents
 
-import sri.core.{BaseTest, ComponentS, CreateElementNoProps, ReactDOM}
+import sri.core.{
+  BaseTest,
+  ComponentS,
+  CreateElementNoProps,
+  JSProps,
+  JSState,
+  ReactDOM
+}
+
+import scala.scalajs.js
+import scala.scalajs.js.annotation.JSExportStatic
 
 class LifeCycle extends ComponentS[LifeCycle.State] {
 
@@ -8,21 +18,8 @@ class LifeCycle extends ComponentS[LifeCycle.State] {
 
   initialState(State(""))
 
-  override def componentWillMount(): Unit = {
-    willMount = true
-  }
-
   override def componentDidMount(): Unit = {
     didMount = true
-  }
-
-//  override def componentWillReceiveProps(nextProps: PropsType): Unit = {
-//    willReceiveProps = true
-//  }
-
-  override def componentWillUpdate(nextProps: PropsType,
-                                   nextState: StateType): Unit = {
-    willUpdate = true
   }
 
   def render() = {
@@ -36,8 +33,14 @@ class LifeCycle extends ComponentS[LifeCycle.State] {
     true
   }
 
+  override def getSnapshotBeforeUpdate(
+      prevJSProps: PropsType,
+      prevJSState: StateType): js.UndefOr[SnapShot] = {
+    snapshotBeforeUpdate = true
+  }
   override def componentDidUpdate(prevProps: PropsType,
-                                  prevState: StateType): Unit = {
+                                  prevState: StateType,
+                                  snapshot: js.UndefOr[SnapShot]): Unit = {
     didUpdate = true
   }
 
@@ -52,17 +55,13 @@ class LifeCycle extends ComponentS[LifeCycle.State] {
 
 object LifeCycle {
 
-  var willMount = false
-
   var willUnMount = false
 
   var didMount = false
 
-  var willUpdate = false
+  var snapshotBeforeUpdate = false
 
   var didUpdate = false
-
-  var willReceiveProps = false
 
   var rendered = false
 
@@ -78,33 +77,20 @@ object LifeCycle {
 class LifeCycleTest extends BaseTest {
   import LifeCycle._
 
-//  before {
-  willMount = false
-  didMount = false
-  rendered = false
-  willUpdate = false
-  didUpdate = false
-  shouldUpdate = false
-  willReceiveProps = false
-//  }
-
   test("test ComponentS life cycles") {
 
     val instance =
       ReactDOM.render(LifeCycle(),
                       org.scalajs.dom.document.getElementById(APP_ID))
 
-    expect(willMount).toBeTruthy()
     expect(didMount).toBeTruthy()
     expect(rendered).toBeTruthy()
-    expect(willUpdate).toBeFalsy()
+    expect(snapshotBeforeUpdate).toBeFalsy()
     expect(didUpdate).toBeFalsy()
-    expect(willReceiveProps).toBeFalsy()
     expect(shouldUpdate).toBeFalsy()
     instance.updateState()
-    expect(willUpdate).toBeTruthy()
+    expect(snapshotBeforeUpdate).toBeTruthy()
     expect(didUpdate).toBeTruthy()
-    expect(willReceiveProps).toBeFalsy()
     expect(shouldUpdate).toBeTruthy()
 
   }

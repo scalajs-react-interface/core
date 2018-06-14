@@ -8,12 +8,14 @@ import sri.core.{
   CreateElementNoProps,
   CreateElementWithChildren,
   JSProps,
+  JSState,
   ReactDOM,
   ReactNode,
   View
 }
 
 import scala.scalajs.js.JSConverters.genTravConvertible2JSRichGenTrav
+import scala.scalajs.js.UndefOr
 
 class GlobalComponent extends ComponentS[GlobalState] {
 
@@ -71,18 +73,6 @@ class RNPSChild extends ComponentNoPS {
     View(id = "noprops and state")(null)
   }
 
-  override def componentWillUpdate(): Unit = {
-    willUpdate = true
-  }
-
-  override def componentWillReceiveProps(): Unit = {
-    willReceiveProps = true
-  }
-
-  override def componentWillMount(): Unit = {
-    willMount = true
-  }
-
   override def componentDidMount(): Unit = {
     didMount = true
   }
@@ -92,24 +82,29 @@ class RNPSChild extends ComponentNoPS {
     true
   }
 
-  override def componentDidUpdate(): Unit = {
+  override def getSnapshotBeforeUpdate(): UndefOr[SnapShot] = {
+    snapshotBeforeUpdate = true
+  }
+
+  override def componentDidUpdate(prevJSProps: JSProps {
+    type ScalaProps = Null
+  }, prevJSState: JSState {
+    type ScalaState = Null
+  }, snapShot: UndefOr[SnapShot]): Unit = {
     didUpdate = true
   }
+
 }
 
 object RNPSChild {
-
-  var willMount = false
 
   var willUnMount = false
 
   var didMount = false
 
-  var willUpdate = false
+  var snapshotBeforeUpdate = false
 
   var didUpdate = false
-
-  var willReceiveProps = false
 
   var rendered = false
 
@@ -128,15 +123,13 @@ class LifeCycleTest extends BaseTest {
       ReactDOM.render(CreateElementNoProps[GlobalComponent](),
                       org.scalajs.dom.document.getElementById(APP_ID))
 
-    expect(willMount).toBeTruthy()
     expect(didMount).toBeTruthy()
     expect(rendered).toBeTruthy()
-    expect(willUpdate).toBeFalsy()
+    expect(snapshotBeforeUpdate).toBeFalsy()
     expect(didUpdate).toBeFalsy()
-    expect(willReceiveProps).toBeFalsy()
     expect(shouldUpdate).toBeFalsy()
     instance.newStateUpdate()
-    expect(willUpdate).toBeTruthy()
+    expect(snapshotBeforeUpdate).toBeTruthy()
     expect(didUpdate).toBeTruthy()
     expect(shouldUpdate).toBeTruthy()
 

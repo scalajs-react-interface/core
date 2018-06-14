@@ -12,6 +12,8 @@ trait React extends js.Object {
                     children: ReactNode*): ReactElement =
     js.native
 
+  def createContext[T](defaultValue: T): ReactContext[T] = js.native
+
   def cloneElement(element: ReactElement,
                    props: js.Any = ???,
                    children: js.Any = ???): ReactElement = js.native
@@ -49,6 +51,7 @@ trait ReactPortal extends js.Object {
 trait ReactClass extends js.Object {
   type PropsType
   type StateType
+  type SnapShot
   var contextTypes: js.UndefOr[js.Any] = js.undefined
   var childContextTypes: js.UndefOr[js.Any] = js.undefined
 }
@@ -154,15 +157,21 @@ abstract class ComponentRaw[P, S] extends ReactClass {
 
   def componentWillUpdate(nextProps: P, nextState: S): Unit = js.native
 
+  def getSnapshotBeforeUpdate(prevProps: P,
+                              prevState: S): js.UndefOr[SnapShot] = js.native
+
   def componentDidUpdate(prevProps: P, prevState: S): Unit = js.native
 
+  def componentDidUpdate(prevProps: P,
+                         prevState: S,
+                         snapshot: js.UndefOr[SnapShot]): Unit = js.native
 }
 
 @js.native
 @JSImport("react", "Component")
 private[sri] abstract class InternalComponentSecondary[P >: Null <: AnyRef,
                                                        S >: Null <: AnyRef](
-    initialJSProps: JSProps { type ScalaProps = P })(implicit ev: =:!=[P, Null])
+    initialJSProps: js.Object)(implicit ev: =:!=[P, Null])
     extends ReactScalaClass {
 
   override type ScalaPropsType = P
@@ -195,26 +204,27 @@ private[sri] abstract class InternalComponentSecondary[P >: Null <: AnyRef,
   def componentWillReceiveProps(nextJSProps: JSProps { type ScalaProps = P })
     : Unit = js.native
 
-  def shouldComponentUpdate(nextJSProps: JSProps { type ScalaProps = P }, nextJSState: JSState {
-    type ScalaState = S
-  }): Boolean =
+  def shouldComponentUpdate(nextJSProps: PropsType,
+                            nextJSState: StateType): Boolean =
     js.native
 
-  def componentWillUpdate(nextJSProps: JSProps { type ScalaProps = P }, nextJSState: JSState {
-    type ScalaState = S
-  }): Unit =
+  def componentWillUpdate(nextJSProps: PropsType,
+                          nextJSState: StateType): Unit =
     js.native
 
-  def componentDidUpdate(prevJSProps: JSProps { type ScalaProps = P }, nextJSState: JSState {
-    type ScalaState = S
-  }): Unit =
+  def getSnapshotBeforeUpdate(prevJSProps: PropsType,
+                              prevJSState: StateType): js.UndefOr[SnapShot] =
+    js.native
+
+  def componentDidUpdate(prevJSProps: PropsType,
+                         prevJSState: StateType,
+                         snapShot: js.UndefOr[SnapShot]): Unit =
     js.native
 
 }
 
 abstract class ComponentSecondary[P >: Null <: AnyRef, S >: Null <: AnyRef](
-    initialProps: JSProps { type ScalaProps = P })(implicit ev: =:!=[P, Null],
-                                                   ev1: =:!=[S, Null])
+    initialProps: js.Object)(implicit ev: =:!=[P, Null], ev1: =:!=[S, Null])
     extends InternalComponentSecondary[P, S](initialProps)
     with ReactScalaClass {
 
@@ -257,9 +267,8 @@ abstract class ComponentSecondary[P >: Null <: AnyRef, S >: Null <: AnyRef](
     refs.selectDynamic(name).asInstanceOf[T]
   }
 
-  override def shouldComponentUpdate(nextJSProps: JSProps {
-    type ScalaProps = P
-  }, nextJSState: JSState { type ScalaState = S }): Boolean = {
+  override def shouldComponentUpdate(nextJSProps: PropsType,
+                                     nextJSState: StateType): Boolean = {
 
     (nextJSProps.scalaProps ne props) || (nextJSState.scalaState ne state)
 
@@ -301,22 +310,23 @@ private[sri] abstract class InternalComponent[P <: AnyRef, S <: AnyRef]
 
   def componentWillUnmount(): Unit = js.native
 
-  def componentWillReceiveProps(nextJSProps: JSProps { type ScalaProps = P })
-    : Unit = js.native
+  def componentWillReceiveProps(nextJSProps: PropsType): Unit = js.native
 
-  def shouldComponentUpdate(nextJSProps: JSProps { type ScalaProps = P }, nextJSState: JSState {
-    type ScalaState = S
-  }): Boolean =
+  def shouldComponentUpdate(nextJSProps: PropsType,
+                            nextJSState: StateType): Boolean =
     js.native
 
-  def componentWillUpdate(nextJSProps: JSProps { type ScalaProps = P }, nextJSState: JSState {
-    type ScalaState = S
-  }): Unit =
+  def componentWillUpdate(nextJSProps: PropsType,
+                          nextJSState: StateType): Unit =
     js.native
 
-  def componentDidUpdate(prevJSProps: JSProps { type ScalaProps = P }, nextJSState: JSState {
-    type ScalaState = S
-  }): Unit =
+  def getSnapshotBeforeUpdate(prevJSProps: PropsType,
+                              prevJSState: StateType): js.UndefOr[SnapShot] =
+    js.native
+
+  def componentDidUpdate(prevJSProps: PropsType,
+                         prevJSState: StateType,
+                         snapShot: js.UndefOr[SnapShot]): Unit =
     js.native
 
 }
@@ -368,9 +378,8 @@ abstract class Component[P >: Null <: AnyRef, S >: Null <: AnyRef](
     refs.selectDynamic(name).asInstanceOf[T]
   }
 
-  override def shouldComponentUpdate(nextJSProps: JSProps {
-    type ScalaProps = P
-  }, nextJSState: JSState { type ScalaState = S }): Boolean = {
+  override def shouldComponentUpdate(nextJSProps: PropsType,
+                                     nextJSState: StateType): Boolean = {
 
     (nextJSProps.scalaProps ne props) || (nextJSState.scalaState ne state)
 
@@ -404,24 +413,28 @@ private[sri] abstract class InternalComponentP[P <: AnyRef]
 
   def componentWillUnmount(): Unit = js.native
 
-  def componentWillReceiveProps(nextJSProps: JSProps { type ScalaProps = P })
-    : Unit = js.native
+  def componentWillReceiveProps(nextJSProps: PropsType): Unit = js.native
 
-  def shouldComponentUpdate(nextJSProps: JSProps { type ScalaProps = P })
-    : Boolean =
+  def shouldComponentUpdate(nextJSProps: PropsType): Boolean =
     js.native
 
-  def componentWillUpdate(nextJSProps: JSProps { type ScalaProps = P }): Unit =
+  def componentWillUpdate(nextJSProps: PropsType): Unit =
     js.native
 
-  def componentDidUpdate(prevJSProps: JSProps { type ScalaProps = P }): Unit =
+  def getSnapshotBeforeUpdate(prevJSProps: PropsType): js.UndefOr[SnapShot] =
     js.native
 
+  def componentDidUpdate(prevJSProps: PropsType,
+                         prevJSState: StateType,
+                         snapShot: js.UndefOr[SnapShot]): Unit =
+    js.native
 }
 
 abstract class ComponentP[P >: Null <: AnyRef](implicit ev: =:!=[P, Null])
     extends InternalComponentP[P]
     with ReactScalaClass {
+
+  override type ScalaStateType = Null
 
   @JSName("scalaProps")
   @inline
@@ -435,9 +448,7 @@ abstract class ComponentP[P >: Null <: AnyRef](implicit ev: =:!=[P, Null])
     refs.selectDynamic(name).asInstanceOf[T]
   }
 
-  override def shouldComponentUpdate(nextJSProps: JSProps {
-    type ScalaProps = P
-  }): Boolean = {
+  override def shouldComponentUpdate(nextJSProps: PropsType): Boolean = {
     props ne nextJSProps.scalaProps
   }
 }
@@ -476,19 +487,21 @@ private[sri] abstract class InternalComponentS[S <: AnyRef]
 
   def componentWillUnmount(): Unit = js.native
 
-  def shouldComponentUpdate(nextJSProps: JSProps { type ScalaProps = Null }, nextJSState: JSState {
-    type ScalaState = S
-  }): Boolean =
+  def shouldComponentUpdate(nextJSProps: PropsType,
+                            nextJSState: StateType): Boolean =
     js.native
 
-  def componentWillUpdate(nextJSProps: JSProps { type ScalaProps = Null }, nextJSState: JSState {
-    type ScalaState = S
-  }): Unit =
+  def componentWillUpdate(nextJSProps: PropsType,
+                          nextJSState: StateType): Unit =
     js.native
 
-  def componentDidUpdate(prevJSProps: JSProps { type ScalaProps = Null }, nextJSState: JSState {
+  def getSnapshotBeforeUpdate(prevJSProps: PropsType,
+                              prevJSState: StateType): js.UndefOr[SnapShot] =
+    js.native
+
+  def componentDidUpdate(prevJSProps: JSProps { type ScalaProps = Null }, prevJSState: JSState {
     type ScalaState = S
-  }): Unit =
+  }, snapShot: js.UndefOr[SnapShot]): Unit =
     js.native
 
 }
@@ -577,9 +590,14 @@ private[sri] abstract class InternalComponentJS[P <: js.Object, S <: AnyRef]
   }): Unit =
     js.native
 
-  def componentDidUpdate(prevJSProps: P, nextJSState: JSState {
+  def getSnapshotBeforeUpdate(prevJSProps: P, prevJSState: JSState {
     type ScalaState = S
-  }): Unit =
+  }): js.UndefOr[SnapShot] =
+    js.native
+
+  def componentDidUpdate(prevJSProps: P, prevJSState: JSState {
+    type ScalaState = S
+  }, snapShot: js.UndefOr[SnapShot]): Unit =
     js.native
 
 }
@@ -616,6 +634,9 @@ private[sri] abstract class InternalComponentJSP[P <: AnyRef]
     js.native
 
   def componentWillUpdate(nextJSProps: P): Unit =
+    js.native
+
+  def getSnapshotBeforeUpdate(prevJSProps: P): js.UndefOr[SnapShot] =
     js.native
 
   def componentDidUpdate(prevJSProps: P): Unit =
@@ -676,9 +697,7 @@ abstract class ComponentNotPure[P >: Null <: AnyRef, S >: Null <: AnyRef](
 abstract class ComponentNotPureP[P >: Null <: AnyRef](
     implicit ev: =:!=[P, Null])
     extends ComponentP[P] {
-  override def shouldComponentUpdate(nextJSProps: JSProps {
-    type ScalaProps = P
-  }): Boolean = {
+  override def shouldComponentUpdate(nextJSProps: PropsType): Boolean = {
     true
   }
 }
@@ -686,9 +705,8 @@ abstract class ComponentNotPureP[P >: Null <: AnyRef](
 abstract class ComponentNotPureS[S >: Null <: AnyRef](
     implicit ev2: =:!=[S, Null])
     extends ComponentS[S] {
-  override def shouldComponentUpdate(nextJSProps: JSProps {
-    type ScalaProps = Null
-  }, nextJSState: JSState { type ScalaState = S }): Boolean = {
+  override def shouldComponentUpdate(nextJSProps: PropsType,
+                                     nextJSState: StateType): Boolean = {
     true
   }
 }
@@ -700,6 +718,8 @@ private[sri] abstract class InternalComponentNoPS
     with ReactScalaClass {
 
   override type ScalaPropsType = Null
+
+  override type ScalaStateType = Null
 
   @JSName("props") def jsProps: PropsType = js.native
 
@@ -723,7 +743,13 @@ private[sri] abstract class InternalComponentNoPS
 
   def componentWillUpdate(): Unit = js.native
 
-  def componentDidUpdate(): Unit = js.native
+  def getSnapshotBeforeUpdate(): js.UndefOr[SnapShot] =
+    js.native
+
+  def componentDidUpdate(prevJSProps: PropsType,
+                         prevJSState: StateType,
+                         snapShot: js.UndefOr[SnapShot]): Unit =
+    js.native
 
 }
 

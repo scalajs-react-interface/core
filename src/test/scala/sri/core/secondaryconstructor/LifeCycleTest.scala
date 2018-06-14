@@ -1,10 +1,19 @@
 package sri.core.secondaryconstructor
 
-import sri.core.{BaseTest, ComponentSecondary, CreateElement, JSProps, ReactDOM}
+import sri.core.{
+  BaseTest,
+  ComponentSecondary,
+  CreateElement,
+  JSProps,
+  JSState,
+  ReactDOM
+}
 
 import scala.scalajs.js
+import scala.scalajs.js.UndefOr
+import scala.scalajs.js.annotation.JSExportStatic
 
-class LifeCycle(initialProps: JSProps { type ScalaProps = LifeCycle.Props })
+class LifeCycle(initialProps: js.Object)
     extends ComponentSecondary[LifeCycle.Props, LifeCycle.State](initialProps) {
 
   import LifeCycle._
@@ -13,21 +22,8 @@ class LifeCycle(initialProps: JSProps { type ScalaProps = LifeCycle.Props })
 
   initialState(State(""))
 
-  override def componentWillMount(): Unit = {
-    willMount = true
-  }
-
   override def componentDidMount(): Unit = {
     didMount = true
-  }
-
-  override def componentWillReceiveProps(nextProps: PropsType): Unit = {
-    willReceiveProps = true
-  }
-
-  override def componentWillUpdate(nextProps: PropsType,
-                                   nextState: StateType): Unit = {
-    willUpdate = true
   }
 
   def render() = {
@@ -41,8 +37,19 @@ class LifeCycle(initialProps: JSProps { type ScalaProps = LifeCycle.Props })
     true
   }
 
-  override def componentDidUpdate(prevProps: PropsType,
-                                  prevState: StateType): Unit = {
+  override def getSnapshotBeforeUpdate(prevJSProps: JSProps {
+    type ScalaProps = Props
+  }, prevJSState: JSState {
+    type ScalaState = State
+  }): UndefOr[SnapShot] = {
+    snapshotBeforeUpdate = true
+  }
+
+  override def componentDidUpdate(prevJSProps: JSProps {
+    type ScalaProps = Props
+  }, prevJSState: JSState {
+    type ScalaState = State
+  }, snapShot: UndefOr[SnapShot]): Unit = {
     didUpdate = true
   }
 
@@ -57,24 +64,30 @@ class LifeCycle(initialProps: JSProps { type ScalaProps = LifeCycle.Props })
 
 object LifeCycle {
 
-  var willMount = false
-
   var willUnMount = false
 
   var didMount = false
 
-  var willUpdate = false
+  var snapshotBeforeUpdate = false
+
+  var derivedStateFromProps = false
 
   var didUpdate = false
-
-  var willReceiveProps = false
 
   var rendered = false
 
   var shouldUpdate = false
 
-  case class State(name: String)
-  case class Props()
+  case class State(name: String, count: Int = 0)
+  case class Props(count: Int = 1)
+
+  @JSExportStatic
+  def getDerivedStateFromProps(props: JSProps { type ScalaProps = Props }, state: JSState {
+    type ScalaState = State
+  }) = {
+    derivedStateFromProps = !derivedStateFromProps
+    JSState(state.scalaState.copy(count = props.scalaProps.count))
+  }
 
   @inline
   def apply(props: Props = Props(), ref: js.Function1[LifeCycle, Unit] = null) =
@@ -84,30 +97,21 @@ object LifeCycle {
 class LifeCycleTest extends BaseTest {
   import LifeCycle._
 
-  willMount = false
-  didMount = false
-  rendered = false
-  willUpdate = false
-  didUpdate = false
-  shouldUpdate = false
-  willReceiveProps = false
-
   test("test ComponentSecondary life cycles") {
 
     val instance =
       ReactDOM.render(LifeCycle(),
                       org.scalajs.dom.document.getElementById(APP_ID))
-    expect(willMount).toBeTruthy()
     expect(didMount).toBeTruthy()
     expect(rendered).toBeTruthy()
-    expect(willUpdate).toBeFalsy()
+    expect(derivedStateFromProps).toBeTruthy()
+    expect(snapshotBeforeUpdate).toBeFalsy()
     expect(didUpdate).toBeFalsy()
-    expect(willReceiveProps).toBeFalsy()
     expect(shouldUpdate).toBeFalsy()
     instance.updateState()
-    expect(willUpdate).toBeTruthy()
+    expect(derivedStateFromProps).toBeFalsy()
+    expect(snapshotBeforeUpdate).toBeTruthy()
     expect(didUpdate).toBeTruthy()
-    expect(willReceiveProps).toBeFalsy()
     expect(shouldUpdate).toBeTruthy()
     expect(instance.propsInCtor != null).toBeTruthy()
   }

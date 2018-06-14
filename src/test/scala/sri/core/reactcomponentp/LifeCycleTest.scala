@@ -1,25 +1,22 @@
 package sri.core.reactcomponentp
 
-import sri.core.{BaseTest, ComponentP, CreateElement, ReactDOM}
+import sri.core.{
+  BaseTest,
+  ComponentP,
+  CreateElement,
+  JSProps,
+  JSState,
+  ReactDOM
+}
+
+import scala.scalajs.js.UndefOr
 
 class LifeCycle extends ComponentP[LifeCycle.Props] {
 
   import LifeCycle._
 
-  override def componentWillMount(): Unit = {
-    willMount = true
-  }
-
   override def componentDidMount(): Unit = {
     didMount = true
-  }
-
-  override def componentWillReceiveProps(nextProps: PropsType): Unit = {
-    willReceiveProps = true
-  }
-
-  override def componentWillUpdate(nextProps: PropsType): Unit = {
-    willUpdate = true
   }
 
   def render() = {
@@ -32,7 +29,17 @@ class LifeCycle extends ComponentP[LifeCycle.Props] {
     true
   }
 
-  override def componentDidUpdate(prevProps: PropsType): Unit = {
+  override def getSnapshotBeforeUpdate(prevJSProps: JSProps {
+    type ScalaProps = Props
+  }): UndefOr[SnapShot] = {
+    snapshotBeforeUpdate = true
+  }
+
+  override def componentDidUpdate(prevJSProps: JSProps {
+    type ScalaProps = Props
+  }, prevJSState: JSState {
+    type ScalaState = Null
+  }, snapShot: UndefOr[SnapShot]): Unit = {
     didUpdate = true
   }
 
@@ -47,17 +54,13 @@ class LifeCycle extends ComponentP[LifeCycle.Props] {
 
 object LifeCycle {
 
-  var willMount = false
-
   var willUnMount = false
 
   var didMount = false
 
-  var willUpdate = false
+  var snapshotBeforeUpdate = false
 
   var didUpdate = false
-
-  var willReceiveProps = false
 
   var rendered = false
 
@@ -74,13 +77,6 @@ object LifeCycle {
 class LifeCycleTest extends BaseTest {
 
   import LifeCycle._
-  willMount = false
-  didMount = false
-  rendered = false
-  willUpdate = false
-  didUpdate = false
-  shouldUpdate = false
-  willReceiveProps = false
 
   test("test ComponentP life cycles") {
 
@@ -88,17 +84,14 @@ class LifeCycleTest extends BaseTest {
       ReactDOM.render(LifeCycle(),
                       org.scalajs.dom.document.getElementById(APP_ID))
 
-    expect(willMount).toBeTruthy()
     expect(didMount).toBeTruthy()
     expect(rendered).toBeTruthy()
-    expect(willUpdate).toBeFalsy()
+    expect(snapshotBeforeUpdate).toBeFalsy()
     expect(didUpdate).toBeFalsy()
-    expect(willReceiveProps).toBeFalsy()
     expect(shouldUpdate).toBeFalsy()
     instance.updateComponent()
-    expect(willUpdate).toBeTruthy()
+    expect(snapshotBeforeUpdate).toBeTruthy()
     expect(didUpdate).toBeTruthy()
-    expect(willReceiveProps).toBeFalsy()
 
   }
 
